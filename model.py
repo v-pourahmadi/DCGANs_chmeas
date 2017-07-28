@@ -246,7 +246,7 @@ class DCGAN(object):
         #print("I am here!")
         #print(data)
         batch_idxs = min(len(data), config.train_size) // config.batch_size
-        print(len(data))
+        #print(len(data))
 
       for idx in xrange(0, batch_idxs):
 
@@ -580,13 +580,13 @@ class DCGAN(object):
       
   def save(self, checkpoint_dir, step):
     model_name = "DCGAN.model"
-    checkpoint_dir = os.path.join(checkpoint_dir, self.model_dir)
+    #checkpoint_dir = os.path.join(checkpoint_dir, self.model_dir)
 
     if not os.path.exists(checkpoint_dir):
       os.makedirs(checkpoint_dir)
 
     self.saver.save(self.sess,
-            os.path.join(checkpoint_dir, model_name),
+            checkpoint_dir,
             global_step=step)
 
   def load(self, checkpoint_dir):

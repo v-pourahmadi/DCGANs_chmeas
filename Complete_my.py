@@ -28,7 +28,7 @@ flags.DEFINE_string("out_dir", "OutData", "completion Directory name to save the
 flags.DEFINE_string("maskType", "center", "completion Mask type for image corroption 'random', 'center', 'left', 'full' [center]")
 flags.DEFINE_boolean("is_crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
-
+flags.DEFINE_boolean("on_cloud", 0, "If the program will be executed on the cloud or not [0]")
 FLAGS = flags.FLAGS
 
 #parser = argparse.ArgumentParser()
@@ -54,6 +54,8 @@ def main(_):
   with tf.Session(config=run_config) as sess:
     dcgan = DCGAN(
         sess,
+        input_width=FLAGS.input_width,
+        input_height=FLAGS.input_height,
         output_width=FLAGS.output_width,
         output_height=FLAGS.output_height,
         batch_size=FLAGS.batch_size,

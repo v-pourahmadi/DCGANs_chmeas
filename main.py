@@ -43,8 +43,7 @@ def main(_):
     FLAGS.on_cloud = 0;
 
   if FLAGS.on_cloud==0:
-    checkpoint_dir_t = os.path.join("./output/",FLAGS.checkpoint_dir)
-    if not os.path.exists(checkpoint_dir_t):  
+    if not os.path.exists(FLAGS.checkpoint_dir):  
       os.makedirs(FLAGS.checkpoint_dir)
     if not os.path.exists(FLAGS.sample_dir):
       os.makedirs(FLAGS.sample_dir)
