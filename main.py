@@ -26,11 +26,11 @@ flags.DEFINE_string("sample_dir", "/output", "Directory name to save the image s
 flags.DEFINE_boolean("is_train", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("is_crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
+flags.DEFINE_boolean("on_cloud", 0, "If the program will be executed on the cloud or not [0]")
 FLAGS = flags.FLAGS
 
 def main(_):
   
-  on_cloud=1;
 
   pp.pprint(flags.FLAGS.__flags)
 
@@ -39,10 +39,23 @@ def main(_):
   if FLAGS.output_width is None:
     FLAGS.output_width = FLAGS.output_height
 
-  if not os.path.exists(FLAGS.checkpoint_dir):
-    os.makedirs(FLAGS.checkpoint_dir)
-  if not os.path.exists(FLAGS.sample_dir):
-    os.makedirs(FLAGS.sample_dir)
+  if FLAGS.on_cloud is None:
+    FLAGS.on_cloud = 0;
+
+  if FLAGS.on_cloud==0:
+    checkpoint_dir_t = os.path.join("./output/",FLAGS.checkpoint_dir)
+    if not os.path.exists(checkpoint_dir_t):  
+      os.makedirs(FLAGS.checkpoint_dir)
+    if not os.path.exists(FLAGS.sample_dir):
+      os.makedirs(FLAGS.sample_dir)
+  elif FLAGS.on_cloud==1:
+    checkpoint_dir_t = os.path.join("/output/",FLAGS.checkpoint_dir)
+    if not os.path.exists(checkpoint_dir_t):
+      os.makedirs(checkpoint_dir_t)
+    sample_dir_t = os.path.join("/output/",FLAGS.sample_dir)
+    if not os.path.exists(sample_dir_t):
+      os.makedirs(sample_dir_t)
+
 
   #gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.333)
   run_config = tf.ConfigProto()
@@ -64,7 +77,7 @@ def main(_):
         is_crop=FLAGS.is_crop,
         checkpoint_dir=FLAGS.checkpoint_dir,
         sample_dir=FLAGS.sample_dir,
-        on_cloud=on_cloud)
+        on_cloud=FLAGS.on_cloud)
 
     show_all_variables()
     if FLAGS.is_train:

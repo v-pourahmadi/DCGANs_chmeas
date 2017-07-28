@@ -86,9 +86,9 @@ floyd logs ApjjKjSGxttMnkP7nSygxF -t
 
 with ch_meas - Z_dim=100
 -----------------
-floyd run --gpu --env tensorflow-1.0 --data vahid/datasets/ch_meas:ch_meas --data vahid/datasets/ch_meas:ch_meas  --data vahid/projects/image-comp-gan/8/output/checkpoint:checkpoint "python main.py --dataset ch_meas --input_height=74 --output_height=74 --is_crop True --is_train --sample_dir /output/ch_meas --checkpoint_dir checkpoint"
+floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas --data /vahid/projects/image-comp-gan/8/output/checkpoint:checkpoint "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --is_train --sample_dir /output/ch_meas --checkpoint_dir checkpoint --on_cloud=1"
 
-
+python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --is_train --sample_dir /output/ch_meas --checkpoint_dir checkpoint --on_cloud=0
 
 with mydata - Z_dim=100
 -----------------

@@ -169,11 +169,12 @@ class DCGAN(object):
     #  data = glob(os.path.join("..\..\..\..\Backups/img_align_celeba\img_align_celeba", self.input_fname_pattern))
       data = glob(os.path.join("/input/mydata", self.input_fname_pattern))
     else:
-      if (on_cloud==0):
+      if (self.on_cloud==0):
         data = glob(os.path.join("./data", config.dataset, self.input_fname_pattern))
-      elif (on_cloud==1):
-        data = glob(os.path.join(config.dataset, self.input_fname_pattern))
-
+      elif (self.on_cloud==1):
+        data = glob(os.path.join("/",config.dataset, self.input_fname_pattern))
+    
+    #print(data)
 
 
     #np.random.shuffle(data)
@@ -191,7 +192,10 @@ class DCGAN(object):
       self.G_sum, self.d_loss_fake_sum, self.g_loss_sum])
     self.d_sum = merge_summary(
         [self.z_sum, self.d_sum, self.d_loss_real_sum, self.d_loss_sum])
-    self.writer = SummaryWriter("/output/logs", self.sess.graph)
+    if (self.on_cloud==0):
+      self.writer = SummaryWriter("./output/logs", self.sess.graph)
+    elif (self.on_cloud==1):
+      self.writer = SummaryWriter("/output/logs", self.sess.graph)
     #self.writer = SummaryWriter("/logs", self.sess.graph)
 
     sample_z = np.random.uniform(-1, 1, size=(self.sample_num , self.z_dim))
@@ -224,9 +228,7 @@ class DCGAN(object):
       print(" [!] Load failed...")
 
     for epoch in xrange(config.epoch):
-      if config.dataset == 'mnist':
-        batch_idxs = min(len(data_X), config.train_size) // config.batch_size
-      elif config.dataset == 'celebA':
+      if config.dataset == 'celebA':
         data = glob(os.path.join("/input/img_align_celeba", self.input_fname_pattern))
       #  data = glob(os.path.join("..\..\..\..\Backups/img_align_celeba\img_align_celeba", self.input_fname_pattern))
         batch_idxs = min(len(data), config.train_size) // config.batch_size
@@ -235,12 +237,16 @@ class DCGAN(object):
       #  data = glob(os.path.join("..\..\..\..\Backups/img_align_celeba\img_align_celeba", self.input_fname_pattern))
         batch_idxs = min(len(data), config.train_size) // config.batch_size
       else:      
-        if on_cloud==0
-          data = glob(os.path.join("./data", config.dataset, self.input_fname_pattern))
-        elif on_cloud==1
-          data = glob(os.path.join( config.dataset, self.input_fname_pattern))        
-        #print((os.path.join("../../../../Backups/img_align_celeba/img_align_celeba", '*.jpg')))
+        if self.on_cloud==0:
+          #print("I am here!")  
+          data = glob(os.path.join(".\input", config.dataset, self.input_fname_pattern))
+        elif self.on_cloud==1:
+          data = glob(os.path.join( "/", config.dataset, self.input_fname_pattern))        
+        
+        #print("I am here!")
+        #print(data)
         batch_idxs = min(len(data), config.train_size) // config.batch_size
+        print(len(data))
 
       for idx in xrange(0, batch_idxs):
 
@@ -280,25 +286,13 @@ class DCGAN(object):
         errD_real = self.d_loss_real.eval({ self.inputs: batch_images })
         errG = self.g_loss.eval({self.z: batch_z})
 
-      counter += 1
-      print("Epoch: [%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f" \
-        % (epoch, idx, batch_idxs,
-          time.time() - start_time, errD_fake+errD_real, errG))
+        counter += 1
 
-      if np.mod(counter,500) == 1:
-        if config.dataset == 'mnist':
-          samples, d_loss, g_loss = self.sess.run(
-            [self.sampler, self.d_loss, self.g_loss],
-            feed_dict={
-                self.z: sample_z,
-                self.inputs: sample_inputs,
-                self.y:sample_labels,
-            }
-          )
-          save_images(samples, [8, 8],
-                './{}/train_{:02d}_{:04d}.png'.format(config.sample_dir, epoch, idx))
-          print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
-        else:
+        print("Epoch: [%2d] [%4d/%4d] time: %4.4f, d_loss: %.8f, g_loss: %.8f" \
+          % (epoch, idx, batch_idxs,
+            time.time() - start_time, errD_fake+errD_real, errG))
+
+        if np.mod(counter,100) == 1:
           try:
             print("i am now 1")
             samples, d_loss, g_loss = self.sess.run(
@@ -309,21 +303,25 @@ class DCGAN(object):
               },
             )
             #print(config.sample_dir)
-            save_path = os.path.join(config.sample_dir, 'train_{:02d}_{:04d}.png'.format(epoch, idx))
+            if self.on_cloud==0:
+              save_path = os.path.join('./output',config.sample_dir, 'train_{:02d}_{:04d}.png'.format(epoch, idx))
+            elif self.on_cloud==1:
+              save_path = os.path.join('/output',config.sample_dir, 'train_{:02d}_{:04d}.png'.format(epoch, idx))
+  
             #print(save_path)
             save_images(samples, [8, 8],save_path)
             print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
           except:
             print("one pic error!...")
 
-      if np.mod(counter, 500) == 1:
-        #self.save(config.checkpoint_dir, counter)
-        if on_cloud==0
-          checkpoint_dir = os.path.join("./checkpoint", self.model_dir)
-          self.save(checkpoint_dir, counter)
-        elif on_cloud==1
-          checkpoint_dir = os.path.join("/output/checkpoint", self.model_dir)
-          self.save(checkpoint_dir, counter)
+        if np.mod(counter, 100) == 1:
+          #self.save(config.checkpoint_dir, counter)
+          if self.on_cloud==0:
+            checkpoint_dir = os.path.join("./checkpoint", self.model_dir)
+            self.save(checkpoint_dir, counter)
+          elif self.on_cloud==1:
+            checkpoint_dir = os.path.join("/output/checkpoint", self.model_dir)
+            self.save(checkpoint_dir, counter)
 
   def complete(self, config):
 
