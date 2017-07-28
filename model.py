@@ -18,7 +18,7 @@ class DCGAN(object):
          batch_size=64, sample_num = 64, output_height=64, output_width=64,
          y_dim=None, z_dim=100, gf_dim=64, df_dim=64,
          gfc_dim=1024, dfc_dim=1024, c_dim=3, dataset_name='default',
-         input_fname_pattern='*.jpg', checkpoint_dir=None, sample_dir=None, lam=0.1, on_cloud=0):
+         input_fname_pattern='*.jpg', checkpoint_dir=None,checkpoint_dir_read=None, sample_dir=None, lam=0.1, on_cloud=0):
     """
 
     Args:
@@ -81,6 +81,8 @@ class DCGAN(object):
     self.dataset_name = dataset_name
     self.input_fname_pattern = input_fname_pattern
     self.checkpoint_dir = checkpoint_dir
+    self.checkpoint_dir_read = checkpoint_dir_read
+
     self.build_model()
 
   def build_model(self):
@@ -220,7 +222,7 @@ class DCGAN(object):
   
     counter = 1
     start_time = time.time()
-    could_load, checkpoint_counter = self.load(self.checkpoint_dir)
+    could_load, checkpoint_counter = self.load(self.checkpoint_dir_read)
     if could_load:
       counter = checkpoint_counter
       print(" [*] Load SUCCESS")
@@ -580,7 +582,7 @@ class DCGAN(object):
       
   def save(self, checkpoint_dir, step):
     model_name = "DCGAN.model"
-    #checkpoint_dir = os.path.join(checkpoint_dir, self.model_dir)
+    checkpoint_dir = os.path.join(checkpoint_dir, self.model_dir)
 
     if not os.path.exists(checkpoint_dir):
       os.makedirs(checkpoint_dir)

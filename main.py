@@ -21,8 +21,9 @@ flags.DEFINE_integer("c_dim", 3, "Dimension of image color. [3]")
 flags.DEFINE_integer("z_dim", 100, "Dimension of laten var color. [100]")
 flags.DEFINE_string("dataset", "celebA", "The name of dataset [celebA, mnist, lsun]")
 flags.DEFINE_string("input_fname_pattern", "*.jpg", "Glob pattern of filename of input images [*]")
+flags.DEFINE_string("checkpoint_dir_read", "checkpoint", "Directory name to read the checkpoints [checkpoint]")
 flags.DEFINE_string("checkpoint_dir", "checkpoint", "Directory name to save the checkpoints [checkpoint]")
-flags.DEFINE_string("sample_dir", "/output", "Directory name to save the image samples [output]")
+flags.DEFINE_string("sample_dir", "./output", "Directory name to save the image samples [output]")
 flags.DEFINE_boolean("is_train", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("is_crop", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
@@ -74,6 +75,7 @@ def main(_):
         dataset_name=FLAGS.dataset,
         input_fname_pattern=FLAGS.input_fname_pattern,
         is_crop=FLAGS.is_crop,
+        checkpoint_dir_read=FLAGS.checkpoint_dir_read,
         checkpoint_dir=FLAGS.checkpoint_dir,
         sample_dir=FLAGS.sample_dir,
         on_cloud=FLAGS.on_cloud)
