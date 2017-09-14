@@ -174,7 +174,7 @@ class DCGAN(object):
       if (self.on_cloud==0):
         data = glob(os.path.join("./data", config.dataset, self.input_fname_pattern))
       elif (self.on_cloud==1):
-        data = glob(os.path.join("/",config.dataset, self.input_fname_pattern))
+        data = glob(os.path.join("./data",config.dataset, self.input_fname_pattern))
     
     #print(data)
 
@@ -194,11 +194,11 @@ class DCGAN(object):
       self.G_sum, self.d_loss_fake_sum, self.g_loss_sum])
     self.d_sum = merge_summary(
         [self.z_sum, self.d_sum, self.d_loss_real_sum, self.d_loss_sum])
-    if (self.on_cloud==0):
-      self.writer = SummaryWriter("./output/logs", self.sess.graph)
-    elif (self.on_cloud==1):
-      self.writer = SummaryWriter("/output/logs", self.sess.graph)
-    #self.writer = SummaryWriter("/logs", self.sess.graph)
+    if self.on_cloud==0:
+      save_path = os.path.join('./output',config.sample_dir,'logs')
+    elif self.on_cloud==1:
+      save_path = os.path.join('/output',config.sample_dir,'logs')
+    self.writer = SummaryWriter(save_path, self.sess.graph)
 
     sample_z = np.random.uniform(-1, 1, size=(self.sample_num , self.z_dim))
     
@@ -219,6 +219,15 @@ class DCGAN(object):
         sample_inputs = np.array(sample).astype(np.float32)[:, :, :, None]
       else:
         sample_inputs = np.array(sample).astype(np.float32)
+
+      #print(config.sample_dir)
+      if self.on_cloud==0:
+        save_path = os.path.join('./output',config.sample_dir, 'Actual_Image.png')
+      elif self.on_cloud==1:
+        save_path = os.path.join('/output',config.sample_dir, 'Actual_Image.png')
+
+      #print(save_path)
+      save_images(sample_inputs, [8, 8],save_path)
   
     counter = 1
     start_time = time.time()
@@ -241,7 +250,7 @@ class DCGAN(object):
       else:      
         if self.on_cloud==0:
           #print("I am here!")  
-          data = glob(os.path.join(".\input", config.dataset, self.input_fname_pattern))
+          data = glob(os.path.join("./input", config.dataset, self.input_fname_pattern))
         elif self.on_cloud==1:
           data = glob(os.path.join( "/", config.dataset, self.input_fname_pattern))        
         
@@ -296,21 +305,19 @@ class DCGAN(object):
 
         if np.mod(counter,100) == 1:
           try:
-            print("i am now 1")
+            print("i am now in 1")
             samples, d_loss, g_loss = self.sess.run(
               [self.sampler, self.d_loss, self.g_loss],
               feed_dict={
                   self.z: sample_z,
                   self.inputs: sample_inputs,
               },
-            )
-            #print(config.sample_dir)
+            ) 
             if self.on_cloud==0:
               save_path = os.path.join('./output',config.sample_dir, 'train_{:02d}_{:04d}.png'.format(epoch, idx))
             elif self.on_cloud==1:
               save_path = os.path.join('/output',config.sample_dir, 'train_{:02d}_{:04d}.png'.format(epoch, idx))
   
-            #print(save_path)
             save_images(samples, [8, 8],save_path)
             print("[Sample] d_loss: %.8f, g_loss: %.8f" % (d_loss, g_loss)) 
           except:

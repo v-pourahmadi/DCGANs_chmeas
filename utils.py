@@ -13,6 +13,8 @@ from six.moves import xrange
 
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+import os;
+from glob import glob
 
 pp = pprint.PrettyPrinter()
 
@@ -156,7 +158,7 @@ def make_gif(images, fname, duration=2, true_image=False):
   clip = mpy.VideoClip(make_frame, duration=duration)
   clip.write_gif(fname, fps = len(images) / duration)
 
-def visualize(sess, dcgan, config, option):
+def visualize(sess, dcgan, config, option,on_cloud,sample_dir):
   image_frame_dim = int(math.ceil(config.batch_size**.5))
   if option == 0:
     z_sample = np.random.uniform(-0.5, 0.5, size=(config.batch_size, dcgan.z_dim))
@@ -164,7 +166,7 @@ def visualize(sess, dcgan, config, option):
     save_images(samples, [image_frame_dim, image_frame_dim], '/output/test_%s.png' % strftime("%Y-%m-%d_%H_%M_%S", gmtime()))
   elif option == 1:
     values = np.arange(0, 1, 1./config.batch_size)
-    for idx in xrange(100):
+    for idx in xrange(20):
       print(" [*] %d" % idx)
       z_sample = np.zeros([config.batch_size, dcgan.z_dim])
       for kdx, z in enumerate(z_sample):
@@ -178,8 +180,14 @@ def visualize(sess, dcgan, config, option):
         samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample, dcgan.y: y_one_hot})
       else:
         samples = sess.run(dcgan.sampler, feed_dict={dcgan.z: z_sample})
+  
+      if on_cloud==0:
+        save_path = os.path.join('./output',sample_dir,'tests/test_arange_%s.png' % (idx))
+      elif on_cloud==1:
+        save_path = os.path.join('/output/',sample_dir,'tests/test_arange_%s.png' % (idx))
 
-      save_images(samples, [image_frame_dim, image_frame_dim], '/output/test_arange_%s.png' % (idx))
+      save_images(samples, [image_frame_dim, image_frame_dim], save_path)
+
   elif option == 2:
     values = np.arange(0, 1, 1./config.batch_size)
     for idx in [random.randint(0, 99) for _ in xrange(100)]:
