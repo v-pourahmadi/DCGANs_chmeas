@@ -1,2 +1,5 @@
-model_checkpoint_path: "ch_meas_64_72_72-201"
-all_model_checkpoint_paths: "ch_meas_64_72_72-201"
+model_checkpoint_path: "ch_meas_64_72_72-28701"
+all_model_checkpoint_paths: "ch_meas_64_72_72-1401"
+all_model_checkpoint_paths: "ch_meas_64_72_72-3701"
+all_model_checkpoint_paths: "ch_meas_64_72_72-16801"
+all_model_checkpoint_paths: "ch_meas_64_72_72-28701"

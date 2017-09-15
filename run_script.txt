@@ -8,6 +8,20 @@ with ch_meas - Z_dim=100
 floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas  "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --is_train --sample_dir ch_meas --checkpoint_dir checkpoint --on_cloud=1"
 
 
+Only_PedA_0 and no checkpoint from past (Z_dim=100)
+-----------------------------------------
+floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas  "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --is_train --sample_dir ch_meas --checkpoint_dir checkpoint --epoch=65536 --input_fname_pattern "Ch_real_PedA_0_*.jpg" --on_cloud=1"
+floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas --data /vahid/projects/dcgan_ch_meas/22/output:PastOutput "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --is_train --sample_dir ch_meas --checkpoint_dir checkpoint  --checkpoint_dir_read /PastOutput/checkpoint/ --epoch=65536 --input_fname_pattern "Ch_real_PedA_0_*.jpg" --on_cloud=1"
+vahid/projects/dcgan_ch_meas/23
+
+
+Only_PedA_0 and no checkpoint from past (Z_dim=30)
+-----------------------------------------
+floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas  "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --z_dim=30 --is_train --sample_dir ch_meas --checkpoint_dir checkpoint --epoch=65536 --input_fname_pattern "Ch_real_PedA_0_*.jpg" --on_cloud=1"
+floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas --data /vahid/projects/dcgan_ch_meas/24/output:PastOutput "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --z_dim=30  --is_train --sample_dir ch_meas --checkpoint_dir checkpoint  --checkpoint_dir_read /PastOutput/checkpoint/ --epoch=65536 --input_fname_pattern "Ch_real_PedA_0_*.jpg" --on_cloud=1"
+vahid/projects/dcgan_ch_meas/25
+
+
 
 floyd run --gpu --env tensorflow-1.0 --data /vahid/datasets/ch_meas/1:ch_meas --data /vahid/projects/dcgan_ch_meas/14/output:PastOutput "python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop True --is_train --sample_dir ch_meas --checkpoint_dir checkpoint  --checkpoint_dir_read /PastOutput/checkpoint/ --on_cloud=1"
 
@@ -19,6 +33,7 @@ python main.py --dataset ch_meas --input_height=72 --output_height=72 --is_crop 
 
 
 python Complete_my.py --Test_img ./TestData/ch_meas/ --Outdir ./OutData --dataset ch_meas --visualize True --maskType center --is_crop False --input_height=72 --output_height=72 
+python Complete_my.py --Test_img ./TestData/ch_meas/ --Outdir ./OutData --dataset ch_meas --z_dim=30 --visualize True --maskType center --is_crop False --input_height=72 --output_height=72 
 
 
 

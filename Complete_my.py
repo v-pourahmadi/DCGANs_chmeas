@@ -21,6 +21,7 @@ flags.DEFINE_integer("input_height", 108, "The size of image to use (will be cen
 flags.DEFINE_integer("input_width", None, "The size of image to use (will be center cropped). If None, same value as input_height [None]")
 flags.DEFINE_integer("output_height", 64, "The size of the output images to produce [64]")
 flags.DEFINE_integer("output_width", None, "The size of the output images to produce. If None, same value as output_height [None]")
+flags.DEFINE_integer("z_dim", 100, "Dimension of laten var color. [100]")
 flags.DEFINE_string("dataset", "celebA", "The name of dataset [celebA, mnist, lsun]")
 flags.DEFINE_string("checkpoint_dir", "checkpoint", "Directory name to save the checkpoints [checkpoint]")
 flags.DEFINE_string("Test_imgs", "TestData", " completion Test image samples [TestData]")
@@ -61,6 +62,7 @@ def main(_):
         batch_size=FLAGS.batch_size,
         dataset_name=FLAGS.dataset,
         checkpoint_dir=FLAGS.checkpoint_dir,
+        z_dim=FLAGS.z_dim,        
         lam=FLAGS.lam)
     #dcgan.load(FLAGS.checkpoint_dir):
     dcgan.complete(FLAGS)

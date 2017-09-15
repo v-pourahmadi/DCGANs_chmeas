@@ -355,7 +355,7 @@ class DCGAN(object):
       batch_idxs = int(np.ceil(nImgs/self.batch_size))
 
       if config.maskType == 'random':
-          fraction_masked = 0.5
+          fraction_masked = 0.90
           mask = np.ones(self.image_shape)
           mask[np.random.random(self.image_shape[:2]) < fraction_masked] = 0.0
       elif config.maskType == 'center':
@@ -422,6 +422,16 @@ class DCGAN(object):
               zhats += -config.beta1 * v_prev + (1+config.beta1)*v
               #zhats += - config.learning_rate*g[0]
               zhats = np.clip(zhats, -1, 1)
+
+              subst_rand=np.random.uniform(-1, 1, size=zhats.shape)
+              Random_num=np.random.uniform(-1, 1, size=zhats.shape)
+              Cliped_idx=(((zhats==1) | (zhats==-1) & (subst_rand>0.94)))
+              #print(Cliped_idx.shape)
+              #print(zhats[1,:])
+              #print(Cliped_idx[1])
+              zhats[Cliped_idx]=Random_num[Cliped_idx]
+              #print(zhats[1,:])
+              #exit()
 
               if i % 50 == 0:
                   print(i, np.mean(loss[0:batchSz]))

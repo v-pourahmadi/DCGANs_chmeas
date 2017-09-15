@@ -10,7 +10,10 @@ lib64
 parts
 sdist
 var
-data
 input
 logs
+output
+OutData
+OutData_old
+OutData_old2
 checkpoint
